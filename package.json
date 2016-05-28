@@ -1,0 +1,22 @@
+{
+  "name": "buptclass",
+  "version": "1.0.0",
+  "description": "A nodejs-spider that gets the infomation of empty classrooms in BUPT",
+  "author": "HJM",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.0.0-rc.3",
+    "cheerio": "^0.20.0",
+    "fs": "0.0.2",
+    "gm": "^1.21.1",
+    "mongodb": "^2.1.16",
+    "mongoose": "^4.4.12",
+    "monk": "^1.0.1",
+    "node-schedule": "^1.1.0",
+    "node-tesseract": "^0.2.7",
+    "superagent": "^1.7.2",
+    "superagent-charset": "^0.1.1",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
