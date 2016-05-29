@@ -4,6 +4,8 @@
 欢迎fork、star~
 欢迎pull request~
 
+>个人博客爬虫介绍：
+
 ### 使用方法：
 
 #### 第一步：安装依赖与所需支持
@@ -52,11 +54,22 @@ rule.minute = 0;
 ### 第三步： 运行程序
 `node spider.js`
 
->出现{ [Error: Cannot find module '../build/Release/bson'] code: 'MODULE_NOT_FOUND' }
-js-bson: Failed to load c++ bson extension, using pure JS version
-可以参看https://github.com/Automattic/mongoose/issues/2285，可以不予理会
+### 关于报错信息
 
->程序到识别出验证码后，没有出现登录成功，程序不运行，大概学号和密码输入错误，可等待一会即会报错，{ [Error: socket hang up] code: 'ECONNRESET', response: undefined }
+```
+{ [Error: Cannot find module '../build/Release/bson'] code: 'MODULE_NOT_FOUND' }
+js-bson: Failed to load c++ bson extension, using pure JS version
+```
+
+>报这个错可以参看https://github.com/Automattic/mongoose/issues/2285
+可以不予理会
+
+```
+{ [Error: socket hang up] code: 'ECONNRESET', response: undefined }
+```
+
+>程序到识别出验证码后，没有出现登录成功，程序不运行，可等待一会即会报上面这个错，检查学号和密码是否输入正确
+
 
 ---
 
