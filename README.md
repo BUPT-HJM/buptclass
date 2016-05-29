@@ -4,7 +4,7 @@
 欢迎fork、star~
 欢迎pull request~
 
->个人博客爬虫介绍：
+>个人博客爬虫介绍：http://bupt-hjm.github.io/2016/05/29/buptclass/
 
 ### 使用方法：
 
