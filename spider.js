@@ -1,12 +1,3 @@
-//爬虫初始配置
-var url="http://jwxt.bupt.edu.cn";//登录的链接
-var db = monk('localhost/byr');//连接本地数据库
-var sno = "********";//此处输入学号
-var password = "*********";//此处输入密码
-//时间配置
-rule.hour = 10;
-rule.minute = 0;
-
 //引入模块
 var superagent = require('superagent-charset');
 var cheerio = require("cheerio");
@@ -17,6 +8,20 @@ var async = require('async');
 var monk = require('monk');
 var mongo = require('mongodb');
 var schedule = require('node-schedule');
+
+
+
+//爬虫初始配置(教务系统登录的学号和密码必填)
+var url="http://jwxt.bupt.edu.cn";//登录的链接
+var db = monk('localhost/byr');//连接本地数据库
+var sno = "*********";//此处输入学号
+var password = "*********";//此处输入密码
+//时间配置
+var rule = new schedule.RecurrenceRule();
+rule.hour = 10;
+rule.minute = 0;
+//(默认每天十点)
+
 
 
 //让爬虫更像浏览器
@@ -114,8 +119,8 @@ function getCAPTHA(){
         }
     });
     var options = {
-        l: 'eng',
-        psm: 6,
+        l: 'eng',//英文
+        psm: 6,//假设一个单一的均匀块文本
         binary: 'tesseract'
     };
 
@@ -254,7 +259,7 @@ function spiderGo(arg){
                     }
                     //写入文件
                     var json = JSON.stringify(study);
-                    fs.writeFile("./test.json", json, 'utf-8', function(err){
+                    fs.writeFile("./classroom.json", json, 'utf-8', function(err){
                         if (err) {console.log(err)}
                         console.log('JSON写入成功');
                         console.log("------------------------------");
