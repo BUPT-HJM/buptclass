@@ -14,8 +14,8 @@ var schedule = require('node-schedule');
 //爬虫初始配置(教务系统登录的学号和密码必填)
 var url = "http://jwxt.bupt.edu.cn"; //登录的链接
 var db = monk('localhost/byr'); //连接本地数据库
-var sno = "*********"; //此处输入学号
-var password = "*********"; //此处输入密码
+var sno = "********"; //此处输入学号
+var password = "********"; //此处输入密码
 //时间配置
 var rule = new schedule.RecurrenceRule();
 rule.hour = 10;
@@ -187,8 +187,8 @@ function login() {
                     setTimeout(cb, 2000);
                 },
                 function(err) {
-                    console.log("爬取成功")
-                        //console.log('1.1 err: ', err); // -> undefined
+                    console.log("爬取成功");
+                    SimplifyJson(study); //处理json
                     var byrclass = db.get('byrclass'); //数据库处理
                     byrclass.insert(study, function(err, doc) {
                         if (err) console.log(err);
@@ -251,7 +251,7 @@ function spiderGo(arg) {
                                 if (($(this).find("td").eq(t).attr("width") == "10") && ($(this).find("td").eq(t).attr("bgcolor") == "white")) {
                                     var classNu = t - 12 * (j - 1) + "-" + (t + 1 - 12 * (j - 1)) + "节";
                                     if ((t - 12 * (j - 1)) == 9) {
-                                        classNu = "9节"; //特殊处理
+                                        classNu = "9节(17:30-18:20)"; //特殊处理
                                     }
                                     var classroomNu = $(this).find("td").eq(0).text().trim().slice(0, 5);
                                     var zixi = {
@@ -266,15 +266,71 @@ function spiderGo(arg) {
                         }
 
                     }
-                    //写入文件
-                    var json = JSON.stringify(study);
-                    fs.writeFile("./classroom.json", json, 'utf-8', function(err) {
-                        if (err) {
-                            console.log(err)
-                        }
-                        console.log('JSON写入成功');
-                        console.log("------------------------------");
-                    });
+                    console.log("爬取成功");
+                    console.log("------------------------------");
                 });
         });
+}
+
+
+/**
+ * 从原有的json数据中取出具体一天，具体一个教学楼，具体一节课的空闲教室
+ * @param  {[type]} classNu  [description]
+ * @param  {[type]} weekday  [description]
+ * @param  {[type]} building [description]
+ * @param  {[type]} json     [description]
+ * @return {[type]}          [description]
+ */
+function classGo(classNu, weekday, building, json) {
+    var s = "";
+    for (var key in json) {
+        if (json[key].classNu == classNu && json[key].date == weekday && json[key].building == building) {
+            s = s + json[key].classroomNu + ",";
+        }
+    }
+    s = s.substring(0, s.length - 1);
+    return s;
+}
+
+/**
+ * json合并简化处理
+ * @param {[type]} json [description]
+ */
+function SimplifyJson(json) {
+    var buildings = ["教一", "教二", "教三", "教四", "主楼", "图书馆"];
+    var weekdays = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"];
+    var classNus = ["1-2节", "3-4节", "5-6节", "7-8节", "9节(17:30-18:20)", "10-11节"];
+    var week = [];
+    for (var k = 0; k < weekdays.length; k++) {
+        var weekday = weekdays[k];
+        var classDetail = [];
+        for (var i = 0; i < classNus.length; i++) {
+            var classNu = classNus[i];
+            var building = [];
+            for (var j = 0; j < buildings.length; j++) {
+                var buildingName = buildings[j];
+                var classroomNu = classGo(classNu, weekday, buildingName, json);
+                building.push({
+                    buildingName: buildingName,
+                    classroomNu: classroomNu
+                });
+            }
+            classDetail.push({
+                classNu: classNu,
+                building: building
+            });
+        }
+        week.push({
+            weekday: weekday,
+            classDetail: classDetail
+        });
+    }
+    var week = JSON.stringify(week);
+    fs.writeFile("classroom.json", week, 'utf-8', function(err) {
+        if (err) {
+            console.log(err)
+        }
+        console.log('JSON写入成功');
+        console.log("------------------------------");
+    });
 }
